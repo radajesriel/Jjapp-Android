@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.ui.theme
+package com.jescoding.pixel.jjappandroid.shared.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
