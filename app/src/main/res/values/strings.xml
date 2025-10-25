@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Jjapp Android</string>
+    <string name="item_variation">Variation: %1$s</string>
+    <string name="item_stock">Available Stock: %1$d</string>
 </resources>

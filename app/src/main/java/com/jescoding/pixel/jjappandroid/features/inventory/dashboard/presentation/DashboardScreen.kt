@@ -53,7 +53,7 @@ fun DashboardScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun DashboardScreenPreview() {
+private fun DashboardScreenPreview() {
     JjappAndroidTheme {
         DashboardScreen()
     }
