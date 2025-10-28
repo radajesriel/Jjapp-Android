@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,23 +16,43 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.jescoding.pixel.jjappandroid.features.inventory.dashboard.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.features.inventory.dashboard.presentation.components.DashboardHeader
+import com.jescoding.pixel.jjappandroid.features.inventory.dashboard.presentation.components.DashboardItem
+import com.jescoding.pixel.jjappandroid.features.inventory.dashboard.presentation.data.FakeDashboardData
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
 
 @Composable
 fun DashboardScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    val state = viewModel.uiState.collectAsState()
 
+    DashboardScreenContent(
+        items = state.value.items,
+        searchQuery = searchQuery,
+        onSearchQueryChanged = { newQuery -> searchQuery = newQuery },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun DashboardScreenContent(
+    items: List<DashboardItem>,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-
         DashboardHeader(
             searchQuery = searchQuery,
-            onSearchQueryChanged = { newQuery -> searchQuery = newQuery }
+            onSearchQueryChanged = onSearchQueryChanged
         )
 
         LazyColumn(
@@ -42,10 +62,10 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val itemsList = (1..20).map { "Inventory Item $it" }
-
-            items(itemsList) { item ->
-                Text(text = item)
+            items(items) { item ->
+                // Assuming you have a DashboardItem composable
+                // If not, you'd have your item UI here
+                DashboardItem(data = item)
             }
         }
     }
@@ -55,6 +75,10 @@ fun DashboardScreen(
 @Composable
 private fun DashboardScreenPreview() {
     JjappAndroidTheme {
-        DashboardScreen()
+        DashboardScreenContent(
+            items = FakeDashboardData.items,
+            searchQuery = "Search query",
+            onSearchQueryChanged = {} // No-op for preview
+        )
     }
 }

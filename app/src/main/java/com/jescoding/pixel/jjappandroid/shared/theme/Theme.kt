@@ -67,8 +67,6 @@ fun JjappAndroidTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // Set the status bar to your theme's primary color
-            window.statusBarColor = colorScheme.primary.toArgb() // Or primaryContainer.toArgb()
             // Adjust icon color based on the theme (light/dark)
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
