@@ -34,12 +34,13 @@ fun DashboardHeader(
                     bottomEnd = 40.dp
                 )
             )
-            .background(MaterialTheme.colorScheme.primaryContainer),
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(top = 50.dp),
     ) {
         Text(
             modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
             text = "Inventory List",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontWeight = FontWeight.Bold
         )
@@ -49,7 +50,7 @@ fun DashboardHeader(
                 .fillMaxWidth()
                 .padding(16.dp),
             value = searchQuery,
-            onValueChange = onSearchQueryChanged, // Use the callback
+            onValueChange = onSearchQueryChanged,
             placeholder = {
                 Text(
                     text = "Search items...",

@@ -67,6 +67,8 @@ fun JjappAndroidTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
+            // Make status bar transparent to draw behind it
+            window.statusBarColor = Color.Transparent.toArgb()
             // Adjust icon color based on the theme (light/dark)
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
