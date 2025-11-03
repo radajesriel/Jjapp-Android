@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.jescoding.pixel.jjappandroid.features.inventory.dashboard.presentation.DashboardScreen
+import com.jescoding.pixel.jjappandroid.features.inventory.item.presentation.ItemScreen
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             JjappAndroidTheme {
-                DashboardScreen()
+                ItemScreen()
             }
         }
     }

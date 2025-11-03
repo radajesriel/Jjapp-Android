@@ -2,4 +2,16 @@
     <string name="app_name">Jjapp Android</string>
     <string name="item_variation">Variation: %1$s</string>
     <string name="item_stock">Available Stock: %1$d</string>
+
+    <string name="inventory_on_hand">On Hand</string>
+    <string name="inventory_available_stock">Available Stock</string>
+    <string name="inventory_on_the_way">On The Way</string>
+
+    <string name="inventory_selling_price">Selling Price</string>
+    <string name="inventory_cost_price">Cost Price</string>
+
+    <string name="inventory_item_image_description">Image of %1$s</string>
+
+    <string name="text_label_sku_details">Merchant SKU Details</string>
+    <string name="icon_label_back">Back</string>
 </resources>

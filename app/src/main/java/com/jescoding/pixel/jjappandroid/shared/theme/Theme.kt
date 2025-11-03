@@ -23,6 +23,7 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Pink40,
     primaryContainer = Purple40,
     onPrimaryContainer = Color.White,
+    surfaceContainer = Color.DarkGray.copy(alpha = .2f),
     surface = Color.White,
     onSurface = Color.DarkGray,
     onSurfaceVariant = Color.DarkGray.copy(alpha = 0.7f),
