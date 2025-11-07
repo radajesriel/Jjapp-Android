@@ -33,24 +33,28 @@ import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
 @Composable
 fun ItemScreen(
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ItemScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState.collectAsState()
-    val item = state.value.items.first()
+    val item = state.value.items.firstOrNull()
 
-    ItemScreenContent(
-        modifier = modifier,
-        item = item
-    )
+    if (item != null) {
+        ItemScreenContent(
+            modifier = modifier,
+            item = item,
+            onNavigateUp = onNavigateUp
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemScreenContent(
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    item: InventoryItem,
-    onNavigateBack: () -> Unit = {}
+    item: InventoryItem
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -70,7 +74,7 @@ fun ItemScreenContent(
                     titleContentColor = Color.White
                 ),
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.icon_label_back),
@@ -98,7 +102,8 @@ fun ItemScreenContent(
 fun ItemScreenContentPreview() {
     JjappAndroidTheme {
         ItemScreenContent(
-            item = FakeInventoryData.items.first()
+            item = FakeInventoryData.items.first(),
+            onNavigateUp = {}
         )
     }
 }

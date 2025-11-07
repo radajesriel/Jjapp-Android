@@ -29,6 +29,7 @@ import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
 @Composable
 fun DashboardScreen(
+    onNavigateToItem: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
@@ -39,12 +40,14 @@ fun DashboardScreen(
         items = state.value.items,
         searchQuery = searchQuery,
         onSearchQueryChanged = { newQuery -> searchQuery = newQuery },
-        modifier = modifier
+        modifier = modifier,
+        onNavigateToItem = onNavigateToItem
     )
 }
 
 @Composable
 fun DashboardScreenContent(
+    onNavigateToItem: () -> Unit,
     items: List<DashboardItem>,
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
@@ -70,7 +73,10 @@ fun DashboardScreenContent(
             items(items) { item ->
                 // Assuming you have a DashboardItem composable
                 // If not, you'd have your item UI here
-                DashboardItem(data = item)
+                DashboardItem(
+                    data = item,
+                    onClick = onNavigateToItem
+                )
             }
         }
     }
@@ -86,7 +92,8 @@ private fun DashboardScreenPreview() {
         DashboardScreenContent(
             items = FakeDashboardData.items,
             searchQuery = "Search query",
-            onSearchQueryChanged = {} // No-op for preview
+            onSearchQueryChanged = {},
+            onNavigateToItem = {}
         )
     }
 }

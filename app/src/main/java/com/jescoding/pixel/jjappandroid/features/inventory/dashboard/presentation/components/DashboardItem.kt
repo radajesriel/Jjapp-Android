@@ -31,6 +31,7 @@ import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
 @Composable
 fun DashboardItem(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     data: DashboardItem
 ) {
@@ -40,7 +41,8 @@ fun DashboardItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier.padding(all = 12.dp),
@@ -99,7 +101,8 @@ private fun DashboardItemPreview() {
     JjappAndroidTheme {
         DashboardItem(
             data = FakeDashboardData.items.first(),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            onClick = {}
         )
     }
 }
