@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
-    id("kotlin-kapt")
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
@@ -36,15 +36,16 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    kapt {
-        correctErrorTypes = true
-    }
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler) // Annotation processor
+    implementation(libs.androidx.room.ktx) // Kotlin Extensions and Coroutines support
 
     implementation(libs.androidx.navigation.compose)
 
@@ -62,7 +63,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
