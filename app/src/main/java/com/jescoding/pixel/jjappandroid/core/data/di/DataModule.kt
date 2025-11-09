@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.core.di
+package com.jescoding.pixel.jjappandroid.core.data.di
 
 import com.jescoding.pixel.jjappandroid.core.data.local.repository.FakeDashboardRepositoryImpl
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository

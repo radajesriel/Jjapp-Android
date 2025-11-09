@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.core.di
+package com.jescoding.pixel.jjappandroid.core.data.di
 
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import com.jescoding.pixel.jjappandroid.features.inventory.domain.use_cases.GetDashboardItemBySku
