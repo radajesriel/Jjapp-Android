@@ -28,6 +28,7 @@ import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presentation.data.FakeInventoryData
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
+import com.jescoding.pixel.jjappandroid.shared.util.createNumberFormatter
 
 @Composable
 fun InventoryBody(
@@ -130,12 +131,6 @@ private fun InfoRow(
     }
 }
 
-private fun createNumberFormatter(): NumberFormat {
-    return NumberFormat.getInstance().apply {
-        maximumFractionDigits = 2
-        minimumFractionDigits = 0
-    }
-}
 
 
 @Preview(showBackground = true)

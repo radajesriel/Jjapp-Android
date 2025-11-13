@@ -14,4 +14,6 @@
 
     <string name="text_label_sku_details">Merchant SKU Details</string>
     <string name="icon_label_back">Back</string>
+
+    <string name="text_label_add_product">Add Product</string>
 </resources>
