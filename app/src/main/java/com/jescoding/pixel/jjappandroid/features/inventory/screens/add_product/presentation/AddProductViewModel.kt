@@ -10,23 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-data class AddProductUiState(
-    val itemSku: String = "",
-    val itemName: String = "",
-    val itemVariant: String = "",
-    val availableStock: String = "",
-    val onHandStock: String = "",
-    val onTheWayStock: String = "",
-    val itemCostPrice: String = "",
-    val itemSellingPrice: String = ""
-) {
-    val costPriceDisplay: String
-        get() = if (itemCostPrice == "0.0") "" else itemCostPrice
-
-    val sellingPriceDisplay: String
-        get() = if (itemSellingPrice == "0.0") "" else itemSellingPrice
-}
-
 @HiltViewModel
 class AddProductViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(AddProductUiState())
@@ -53,12 +36,20 @@ class AddProductViewModel @Inject constructor() : ViewModel() {
                     currentState.copy(itemSellingPrice = validatedPrice)
                 }
 
-                is AddProductEvent.OnStockChange -> {
-                    currentState.copy(
-                        availableStock = ValidationUtils.getIntegerOnly(event.availableStock),
-                        onHandStock = ValidationUtils.getIntegerOnly(event.onHandStock),
-                        onTheWayStock = ValidationUtils.getIntegerOnly(event.onTheWayStock)
-                    )
+                is AddProductEvent.OnPhotoSelected -> {
+                    currentState.copy(itemPhotoUri = event.uri)
+                }
+
+                is AddProductEvent.OnAvailableStockChange -> {
+                    currentState.copy(availableStock = event.stock)
+                }
+
+                is AddProductEvent.OnHandStockChange -> {
+                    currentState.copy(onHandStock = event.stock)
+                }
+
+                is AddProductEvent.OnTheWayStockChange -> {
+                    currentState.copy(onTheWayStock = event.stock)
                 }
             }
         }

@@ -65,6 +65,13 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    // For permission handling
+    implementation(libs.accompanist.permissions)
+
+
+    // For asynchronous image loading (recommended)
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
