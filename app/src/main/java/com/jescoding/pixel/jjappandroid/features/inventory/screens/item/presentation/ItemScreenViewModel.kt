@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
-import com.jescoding.pixel.jjappandroid.features.inventory.domain.use_cases.GetDashboardItemBySku
+import com.jescoding.pixel.jjappandroid.core.domain.use_cases.GetDashboardItemBySku
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.launchIn

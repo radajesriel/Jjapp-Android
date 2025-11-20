@@ -1,6 +1,5 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,12 +17,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.presentation.data.FakeDashboardData
@@ -35,6 +37,8 @@ fun DashboardItem(
     modifier: Modifier = Modifier,
     data: DashboardItem
 ) {
+    val context = LocalContext.current
+
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -48,8 +52,16 @@ fun DashboardItem(
             modifier = Modifier.padding(all = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = data.itemImageResId),
+
+            val imageRequest = ImageRequest.Builder(context)
+                .data(data.itemUri)
+                .crossfade(true) // Optional: for a nice fade-in effect
+                .build()
+
+            AsyncImage(
+                model = imageRequest,
+                placeholder = painterResource(data.itemImageResId),
+                fallback = painterResource(data.itemImageResId),
                 contentDescription = "Item Image",
                 contentScale = ContentScale.Crop,
                 // Adding only width and then aspectRatio to maintain square shape
@@ -57,7 +69,6 @@ fun DashboardItem(
                     .size(72.dp)
                     .clip(RoundedCornerShape(8.dp))
             )
-
 
             Column(
                 modifier = Modifier

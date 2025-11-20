@@ -23,4 +23,9 @@ class FakeDashboardRepositoryImpl @Inject constructor() : DashboardRepository {
             emit(items.find { it.itemSku == itemSku })
         }
     }
+
+    override suspend fun saveDashboardItems(item: DashboardItem) {
+        // Do nothing
+    }
+
 }

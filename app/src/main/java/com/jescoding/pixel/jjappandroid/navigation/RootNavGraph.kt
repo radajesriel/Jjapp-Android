@@ -14,13 +14,16 @@ import com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presenta
 fun RootNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.AddProduct.route,
+        startDestination = Screen.Dashboard.route,
         // Optional: Add custom transitions here for a more polished feel
     ) {
         composable(route = Screen.Dashboard.route) {
             DashboardScreen(
                 onNavigateToItem = { itemSku ->
                     navController.navigate("${Screen.Item.route}/$itemSku")
+                },
+                onNavigateToProduct = {
+                    navController.navigate(Screen.AddProduct.route)
                 }
             )
         }

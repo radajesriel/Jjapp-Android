@@ -1,5 +1,6 @@
 package com.jescoding.pixel.jjappandroid.core.domain.model
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import java.math.BigDecimal
 
@@ -25,5 +26,6 @@ data class DashboardItem(
     val onTheWayStock: Int,
     val itemCostPrice: BigDecimal,
     val itemSellingPrice: BigDecimal,
-    @DrawableRes val itemImageResId: Int
+    @DrawableRes val itemImageResId: Int,
+    val itemUri: Uri? = null
 )

@@ -1,6 +1,7 @@
 package com.jescoding.pixel.jjappandroid.core.data.repository
 
 import com.jescoding.pixel.jjappandroid.core.data.local.real.dao.DashboardDao
+import com.jescoding.pixel.jjappandroid.core.data.local.real.entity.toDataModel
 import com.jescoding.pixel.jjappandroid.core.data.local.real.entity.toDomainModel
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
@@ -24,4 +25,10 @@ class DashboardRepositoryImpl @Inject constructor(
             it?.toDomainModel()
         }
     }
+
+    override suspend fun saveDashboardItems(item: DashboardItem) {
+        val dashboardEntity = item.toDataModel()
+        dao.insertItem(dashboardEntity)
+    }
+
 }

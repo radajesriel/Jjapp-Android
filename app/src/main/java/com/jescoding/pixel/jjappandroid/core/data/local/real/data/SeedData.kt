@@ -14,7 +14,8 @@ object SeedData {
             onHandStock = 10,
             onTheWayStock = 0,
             itemCostPrice = 150.00,
-            itemSellingPrice = 199.00
+            itemSellingPrice = 199.00,
+            itemUri = null
         ),
         DashboardItemEntity(
             itemSku = "MW-BH-V3-CLAMP",
@@ -25,7 +26,8 @@ object SeedData {
             onHandStock = 10,
             onTheWayStock = 0,
             itemCostPrice = 200.00,
-            itemSellingPrice = 250.00
+            itemSellingPrice = 250.00,
+            itemUri = null
         ),
         DashboardItemEntity(
             itemSku = "MW-HBR-28MM-BLK",
@@ -36,7 +38,8 @@ object SeedData {
             onHandStock = 10,
             onTheWayStock = 0,
             itemCostPrice = 480.00,
-            itemSellingPrice = 640.00
+            itemSellingPrice = 640.00,
+            itemUri = null
         )
     )
 }

@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.domain.use_cases
+package com.jescoding.pixel.jjappandroid.core.domain.use_cases
 
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository

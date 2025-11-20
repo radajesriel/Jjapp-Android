@@ -3,7 +3,7 @@ package com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.pr
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
-import com.jescoding.pixel.jjappandroid.features.inventory.domain.use_cases.GetDashboardItems
+import com.jescoding.pixel.jjappandroid.core.domain.use_cases.GetDashboardItems
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

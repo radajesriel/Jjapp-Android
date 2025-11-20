@@ -3,7 +3,6 @@ package com.jescoding.pixel.jjappandroid.core.data.local.real.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.math.BigDecimal
 
 @Entity(
     tableName = "dashboard_items",
@@ -19,5 +18,6 @@ data class DashboardItemEntity(
     val onTheWayStock: Int,
     val itemCostPrice: Double,
     val itemSellingPrice: Double,
-    val itemImageResId: Int
+    val itemImageResId: Int,
+    val itemUri: String?
 )

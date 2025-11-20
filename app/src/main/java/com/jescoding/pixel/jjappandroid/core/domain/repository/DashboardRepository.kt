@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface DashboardRepository {
     fun getDashboardItems(): Flow<List<DashboardItem>>
     fun getDashboardItemBySku(itemSku: String): Flow<DashboardItem?>
+    suspend fun saveDashboardItems(item: DashboardItem)
 }

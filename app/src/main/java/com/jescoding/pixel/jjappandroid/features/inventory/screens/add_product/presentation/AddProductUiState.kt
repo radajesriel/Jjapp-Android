@@ -11,7 +11,9 @@ data class AddProductUiState(
     val onTheWayStock: String = "",
     val itemCostPrice: String = "",
     val itemSellingPrice: String = "",
-    val itemPhotoUri: Uri? = null
+    val itemPhotoUri: Uri? = null,
+    val onProductSaved: Boolean = false,
+    val error: String? = null
 ) {
     val costPriceDisplay: String
         get() = if (itemCostPrice == "0.0") "" else itemCostPrice

@@ -1,6 +1,5 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presentation.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presentation.data.FakeInventoryData
@@ -49,8 +49,11 @@ fun InventoryItemHeader(
             modifier = Modifier.padding(all = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = data.itemImageResId),
+            AsyncImage(
+                model = data.itemUri,
+                placeholder = painterResource(id = data.itemImageResId),
+                fallback = painterResource(data.itemImageResId),
+                error = painterResource(data.itemImageResId),
                 contentDescription = stringResource(
                     R.string.inventory_item_image_description,
                     data.itemName

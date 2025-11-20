@@ -24,15 +24,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,6 +70,7 @@ fun AddProductScreen(
     onNavigateUp: () -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState()
+    val onProductSaved = uiState.value.onProductSaved
 
     // Modern photo picker for Android Tiramisu (API 33+) and above.
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -86,11 +93,18 @@ fun AddProductScreen(
     )
 
     // Request legacy permission if needed.
-    LaunchedEffect(legacyStoragePermissionState.status) {
+    LaunchedEffect(legacyStoragePermissionState.status, onProductSaved) {
         if (!legacyStoragePermissionState.status.isGranted
             && legacyStoragePermissionState.status.shouldShowRationale
         ) {
             // Optionally, show a rationale to the user explaining why you need the permission.
+        }
+    }
+
+    LaunchedEffect(onProductSaved) {
+        if (onProductSaved) {
+            onNavigateUp()
+            viewModel.updateUiState({ it.copy(onProductSaved = false) })
         }
     }
 
@@ -129,6 +143,17 @@ fun AddProductScreenContent(
     val itemName = uiState.itemName
     val itemVariant = uiState.itemVariant
     val itemPhotoUri = uiState.itemPhotoUri
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            snackbarHostState.showSnackbar(
+                message = it,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -191,10 +216,41 @@ fun AddProductScreenContent(
                 uiState = uiState,
                 onEvent = onEvent
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            ProductSaveButton(
+                onClick = {
+                    onEvent(AddProductEvent.OnSaveProduct)
+                }
+            )
         }
     }
 }
 
+@Composable
+private fun ProductSaveButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
+        onClick = {
+            onClick()
+        }
+    ) {
+        Text(
+            text = "Save Product",
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
 
 @Composable
 private fun ProductBaseCard(
@@ -219,10 +275,8 @@ private fun ProductCosts(
     onEvent: (AddProductEvent) -> Unit,
     uiState: AddProductUiState
 ) {
-
     val costPrice = uiState.costPriceDisplay
     val sellingPrice = uiState.sellingPriceDisplay
-
     val placeholder = "Set"
 
     ProductBaseCard {

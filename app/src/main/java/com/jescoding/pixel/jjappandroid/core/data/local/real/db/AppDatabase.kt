@@ -7,7 +7,7 @@ import com.jescoding.pixel.jjappandroid.core.data.local.real.entity.DashboardIte
 
 @Database(
     entities = [DashboardItemEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false // Recommended to set to true for production apps
 )
 abstract class AppDatabase : RoomDatabase() {
