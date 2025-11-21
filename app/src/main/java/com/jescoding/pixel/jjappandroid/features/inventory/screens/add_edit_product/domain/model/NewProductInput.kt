@@ -1,8 +1,9 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.model
+package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.model
 
 import android.net.Uri
 
 data class NewProductInput(
+    val itemSku: String?,
     val itemName: String,
     val itemVariant: String,
     val availableStock: String,

@@ -1,10 +1,10 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.data
+package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.data
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import com.jescoding.pixel.jjappandroid.core.domain.dispatcher.DispatcherProvider
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.repository.ProductImageRepository
+import com.jescoding.pixel.jjappandroid.core.domain.providers.DispatcherProvider
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.repository.ProductImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File

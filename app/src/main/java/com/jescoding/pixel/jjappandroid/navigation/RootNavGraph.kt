@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.presentation.AddProductScreen
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.AddProductScreen
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.presentation.DashboardScreen
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presentation.ItemScreen
 
@@ -15,7 +15,6 @@ fun RootNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = Screen.Dashboard.route,
-        // Optional: Add custom transitions here for a more polished feel
     ) {
         composable(route = Screen.Dashboard.route) {
             DashboardScreen(
@@ -30,19 +29,38 @@ fun RootNavGraph(navController: NavHostController) {
 
         composable(
             route = "${Screen.Item.route}/{itemSku}",
-            arguments = listOf(navArgument("itemSku") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("itemSku") {
+                    type = NavType.StringType
+                }
+            )
         ) {
+            val itemSku = it.arguments?.getString("itemSku")
             ItemScreen(
                 onNavigateUp = {
                     navController.navigateUp()
+                },
+                onEditClicked = {
+                    navController.navigate("${Screen.AddProduct.route}?itemSku=$itemSku")
                 }
             )
         }
 
-        composable(route = Screen.AddProduct.route) {
+        composable(
+            route = "${Screen.AddProduct.route}?itemSku={itemSku}",
+            arguments = listOf(
+                navArgument("itemSku") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) {
             AddProductScreen(
                 onNavigateUp = {
                     navController.navigateUp()
+                },
+                onProductSaved = {
+                    navController.navigate(Screen.Dashboard.route)
                 }
             )
         }

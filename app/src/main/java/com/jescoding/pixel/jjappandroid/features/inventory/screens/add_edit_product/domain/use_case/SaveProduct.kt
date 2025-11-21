@@ -1,10 +1,10 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.use_case
+package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case
 
 import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import com.jescoding.pixel.jjappandroid.core.utils.ValidationUtils
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.model.NewProductInput
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.model.NewProductInput
 import java.util.UUID
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ class SaveProduct @Inject constructor(
     private val getPermanentImageUri: GetPermanentImageUri
 ) {
     suspend operator fun invoke(input: NewProductInput) {
-        val itemSku = UUID.randomUUID().toString()
+        val itemSku = input.itemSku ?: UUID.randomUUID().toString()
         val availableStock = input.availableStock.toIntOrNull() ?: 0
         val onHandStock = input.onHandStock.toIntOrNull() ?: 0
         val onTheWayStock = input.onTheWayStock.toIntOrNull() ?: 0

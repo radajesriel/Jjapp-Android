@@ -16,4 +16,6 @@
     <string name="icon_label_back">Back</string>
 
     <string name="text_label_add_product">Add Product</string>
+    <string name="text_label_edit_product">Edit Product</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.presentation
+package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation
 
 import android.Manifest
 import android.net.Uri
@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,7 +57,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.jescoding.pixel.jjappandroid.R
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.presentation.events.AddProductEvent
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductEvent
 import com.jescoding.pixel.jjappandroid.shared.components.SharedTopAppBar
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
@@ -66,8 +65,9 @@ import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 @Composable
 fun AddProductScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddProductViewModel = hiltViewModel(),
+    viewModel: AddEditProductViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit,
+    onProductSaved: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
     val onProductSaved = uiState.value.onProductSaved
@@ -76,7 +76,7 @@ fun AddProductScreen(
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
-            viewModel.onEvent(AddProductEvent.OnPhotoSelected(uri))
+            viewModel.onEvent(AddEditProductEvent.OnPhotoSelected(uri))
         }
     )
 
@@ -88,7 +88,7 @@ fun AddProductScreen(
     val legacyPhotoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            viewModel.onEvent(AddProductEvent.OnPhotoSelected(uri))
+            viewModel.onEvent(AddEditProductEvent.OnPhotoSelected(uri))
         }
     )
 
@@ -103,7 +103,7 @@ fun AddProductScreen(
 
     LaunchedEffect(onProductSaved) {
         if (onProductSaved) {
-            onNavigateUp()
+            onProductSaved()
             viewModel.updateUiState({ it.copy(onProductSaved = false) })
         }
     }
@@ -135,14 +135,15 @@ fun AddProductScreen(
 @Composable
 fun AddProductScreenContent(
     modifier: Modifier = Modifier,
-    uiState: AddProductUiState,
+    uiState: AddEditProductUiState,
     onNavigateUp: () -> Unit,
-    onEvent: (AddProductEvent) -> Unit,
+    onEvent: (AddEditProductEvent) -> Unit,
     onProductPhotoClick: () -> Unit
 ) {
     val itemName = uiState.itemName
     val itemVariant = uiState.itemVariant
     val itemPhotoUri = uiState.itemPhotoUri
+    val header = uiState.header
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -160,7 +161,7 @@ fun AddProductScreenContent(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             SharedTopAppBar(
-                title = stringResource(R.string.text_label_add_product),
+                title = header,
                 navigationDescription = stringResource(R.string.icon_label_back),
                 onNavigateUp = onNavigateUp
             )
@@ -188,7 +189,7 @@ fun AddProductScreenContent(
                 value = itemName,
                 placeholder = "Enter product name",
                 onValueChange = {
-                    onEvent(AddProductEvent.OnNameChange(it))
+                    onEvent(AddEditProductEvent.OnNameChange(it))
                 }
             )
 
@@ -199,7 +200,7 @@ fun AddProductScreenContent(
                 value = itemVariant,
                 placeholder = "Enter Variation",
                 onValueChange = {
-                    onEvent(AddProductEvent.OnVariationChange(it))
+                    onEvent(AddEditProductEvent.OnVariationChange(it))
                 }
             )
 
@@ -221,7 +222,7 @@ fun AddProductScreenContent(
 
             ProductSaveButton(
                 onClick = {
-                    onEvent(AddProductEvent.OnSaveProduct)
+                    onEvent(AddEditProductEvent.OnSaveProduct)
                 }
             )
         }
@@ -272,8 +273,8 @@ private fun ProductBaseCard(
 
 @Composable
 private fun ProductCosts(
-    onEvent: (AddProductEvent) -> Unit,
-    uiState: AddProductUiState
+    onEvent: (AddEditProductEvent) -> Unit,
+    uiState: AddEditProductUiState
 ) {
     val costPrice = uiState.costPriceDisplay
     val sellingPrice = uiState.sellingPriceDisplay
@@ -286,7 +287,7 @@ private fun ProductCosts(
                 value = costPrice,
                 placeholder = placeholder,
                 onValueChange = {
-                    onEvent(AddProductEvent.OnCostChange(it))
+                    onEvent(AddEditProductEvent.OnCostChange(it))
                 }
             )
 
@@ -300,7 +301,7 @@ private fun ProductCosts(
                 value = sellingPrice,
                 placeholder = placeholder,
                 onValueChange = {
-                    onEvent(AddProductEvent.OnSellingPriceChange(it))
+                    onEvent(AddEditProductEvent.OnSellingPriceChange(it))
                 }
             )
         }
@@ -309,8 +310,8 @@ private fun ProductCosts(
 
 @Composable
 private fun ProductQuantities(
-    onEvent: (AddProductEvent) -> Unit,
-    uiState: AddProductUiState
+    onEvent: (AddEditProductEvent) -> Unit,
+    uiState: AddEditProductUiState
 ) {
     val availableStock = uiState.availableStock
     val onHandStock = uiState.onHandStock
@@ -325,7 +326,7 @@ private fun ProductQuantities(
                 value = availableStock,
                 placeholder = placeholder,
                 onValueChange = {
-                    onEvent(AddProductEvent.OnAvailableStockChange(it))
+                    onEvent(AddEditProductEvent.OnAvailableStockChange(it))
                 }
             )
 
@@ -339,7 +340,7 @@ private fun ProductQuantities(
                 value = onHandStock,
                 placeholder = placeholder,
                 onValueChange = {
-                    onEvent(AddProductEvent.OnHandStockChange(it))
+                    onEvent(AddEditProductEvent.OnHandStockChange(it))
                 }
             )
 
@@ -353,7 +354,7 @@ private fun ProductQuantities(
                 value = onTheWayStock,
                 placeholder = placeholder,
                 onValueChange = {
-                    onEvent(AddProductEvent.OnTheWayStockChange(it))
+                    onEvent(AddEditProductEvent.OnTheWayStockChange(it))
                 }
             )
         }
@@ -516,7 +517,7 @@ private fun ProductLabel(
 fun AddProductScreenPreview() {
     JjappAndroidTheme {
         AddProductScreenContent(
-            uiState = AddProductUiState(),
+            uiState = AddEditProductUiState(),
             onNavigateUp = {},
             onEvent = {},
             onProductPhotoClick = {}

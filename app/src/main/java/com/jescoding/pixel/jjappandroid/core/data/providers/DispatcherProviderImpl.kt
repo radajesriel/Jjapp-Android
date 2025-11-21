@@ -1,6 +1,6 @@
-package com.jescoding.pixel.jjappandroid.core.data.dispatcher
+package com.jescoding.pixel.jjappandroid.core.data.providers
 
-import com.jescoding.pixel.jjappandroid.core.domain.dispatcher.DispatcherProvider
+import com.jescoding.pixel.jjappandroid.core.domain.providers.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton

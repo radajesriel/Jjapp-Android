@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.core.domain.dispatcher
+package com.jescoding.pixel.jjappandroid.core.domain.providers
 
 import kotlinx.coroutines.CoroutineDispatcher
 

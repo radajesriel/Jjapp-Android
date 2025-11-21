@@ -1,9 +1,9 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.di
+package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.di
 
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.repository.ProductImageRepository
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.use_case.GetPermanentImageUri
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.use_case.SaveProduct
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.repository.ProductImageRepository
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.GetPermanentImageUri
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.SaveProduct
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

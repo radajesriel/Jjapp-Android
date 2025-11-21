@@ -1,7 +1,7 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.use_case
+package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case
 
 import android.net.Uri
-import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_product.domain.repository.ProductImageRepository
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.repository.ProductImageRepository
 import javax.inject.Inject
 
 class GetPermanentImageUri @Inject constructor(
