@@ -1,6 +1,5 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,10 +11,14 @@ import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_prod
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.LoadProduct
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.SaveProduct
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductEvent
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,14 +37,28 @@ class AddEditProductViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AddEditProductUiState())
     val uiState: StateFlow<AddEditProductUiState> = _uiState.asStateFlow()
 
+    private val _sideEffectFlow = MutableSharedFlow<AddEditProductSideEffect>()
+    val sideEffectFlow = _sideEffectFlow.asSharedFlow()
+
     init {
-        val headerRes = if (itemSku != null) {
+        if (itemSku != null) {
+            // This is the "Edit" flow
+            _uiState.update {
+                it.copy(
+                    header = resourceProvider.getString(R.string.text_label_edit_product),
+                    buttonText = resourceProvider.getString(R.string.button_label_update_product)
+                )
+            }
             onLoadProduct(itemSku)
-            R.string.text_label_edit_product
         } else {
-            R.string.text_label_add_product
+            // This is the "Add" flow
+            _uiState.update {
+                it.copy(
+                    header = resourceProvider.getString(R.string.text_label_add_product),
+                    buttonText = resourceProvider.getString(R.string.button_label_save_product)
+                )
+            }
         }
-        _uiState.update { it.copy(header = resourceProvider.getString(headerRes)) }
     }
 
     fun updateUiState(update: (AddEditProductUiState) -> AddEditProductUiState) {
@@ -106,10 +123,11 @@ class AddEditProductViewModel @Inject constructor(
         }
     }
 
-    private fun onLoadProduct(itemSku: String) =
-        viewModelScope.launch(dispatcherProvider.io) {
-            loadProduct(itemSku).collect { item ->
-                withContext(dispatcherProvider.main) {
+    private fun onLoadProduct(itemSku: String) {
+        viewModelScope.launch {
+            loadProduct(itemSku)
+                .flowOn(dispatcherProvider.io)
+                .collect { item ->
                     item?.let {
                         _uiState.update {
                             it.copy(
@@ -121,37 +139,38 @@ class AddEditProductViewModel @Inject constructor(
                                 onTheWayStock = item.onTheWayStock.toString(),
                                 itemCostPrice = item.itemCostPrice.toString(),
                                 itemSellingPrice = item.itemSellingPrice.toString(),
-                                itemPhotoUri = item.itemUri
+                                itemPhotoUri = item.itemUri,
+                                itemPhotoResId = item.itemImageResId
                             )
                         }
                     }
                 }
-            }
         }
+    }
+
 
     private fun onSaveProduct() {
         viewModelScope.launch {
             try {
+                val input = NewProductInput(
+                    itemSku = itemSku,
+                    itemName = uiState.value.itemName,
+                    itemVariant = uiState.value.itemVariant,
+                    availableStock = uiState.value.availableStock,
+                    onHandStock = uiState.value.onHandStock,
+                    onTheWayStock = uiState.value.onTheWayStock,
+                    itemCostPrice = uiState.value.itemCostPrice,
+                    itemSellingPrice = uiState.value.itemSellingPrice,
+                    itemUri = uiState.value.itemPhotoUri,
+                    itemImageResId = R.drawable.round_local_convenience_store_24
+                )
                 withContext(dispatcherProvider.io) {
-                    val input = NewProductInput(
-                        itemSku = itemSku,
-                        itemName = uiState.value.itemName,
-                        itemVariant = uiState.value.itemVariant,
-                        availableStock = uiState.value.availableStock,
-                        onHandStock = uiState.value.onHandStock,
-                        onTheWayStock = uiState.value.onTheWayStock,
-                        itemCostPrice = uiState.value.itemCostPrice,
-                        itemSellingPrice = uiState.value.itemSellingPrice,
-                        itemUri = uiState.value.itemPhotoUri,
-                        itemImageResId = R.drawable.round_local_convenience_store_24
-                    )
                     saveProduct(input)
                 }
-                _uiState.update { AddEditProductUiState(onProductSaved = true) }
+                _sideEffectFlow.emit(AddEditProductSideEffect.NavigateOnSave)
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message ?: "Unexpected error occured") }
+                _uiState.update { it.copy(error = e.message ?: "Unexpected error occurred") }
             }
         }
-
     }
 }

@@ -17,5 +17,11 @@
 
     <string name="text_label_add_product">Add Product</string>
     <string name="text_label_edit_product">Edit Product</string>
+    <string name="text_label_product_photo">Product Photo*</string>
+    <string name="text_label_product_name">Product Name*</string>
+    <string name="text_label_variation">Variation*</string>
+
+    <string name="button_label_save_product">Save Product</string>
+    <string name="button_label_update_product">Update Product</string>
 
 </resources>

@@ -1,11 +1,6 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation
 
-import android.Manifest
 import android.net.Uri
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +27,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,11 +49,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductEvent
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductSideEffect
+import com.jescoding.pixel.jjappandroid.features.inventory.utils.rememberImagePicker
 import com.jescoding.pixel.jjappandroid.shared.components.SharedTopAppBar
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
@@ -67,44 +62,21 @@ fun AddProductScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditProductViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit,
-    onProductSaved: () -> Unit
+    navigateOnProductSaved: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
-    val onProductSaved = uiState.value.onProductSaved
 
-    // Modern photo picker for Android Tiramisu (API 33+) and above.
-    val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            viewModel.onEvent(AddEditProductEvent.OnPhotoSelected(uri))
-        }
-    )
-
-    // Legacy permission and launcher for older Android versions.
-    val legacyStoragePermissionState = rememberPermissionState(
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
-
-    val legacyPhotoLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            viewModel.onEvent(AddEditProductEvent.OnPhotoSelected(uri))
-        }
-    )
-
-    // Request legacy permission if needed.
-    LaunchedEffect(legacyStoragePermissionState.status, onProductSaved) {
-        if (!legacyStoragePermissionState.status.isGranted
-            && legacyStoragePermissionState.status.shouldShowRationale
-        ) {
-            // Optionally, show a rationale to the user explaining why you need the permission.
-        }
+    val launchImagePicker = rememberImagePicker { uri ->
+        viewModel.onEvent(AddEditProductEvent.OnPhotoSelected(uri))
     }
 
-    LaunchedEffect(onProductSaved) {
-        if (onProductSaved) {
-            onProductSaved()
-            viewModel.updateUiState({ it.copy(onProductSaved = false) })
+    LaunchedEffect(Unit) {
+        viewModel.sideEffectFlow.collect { event ->
+            when (event) {
+                is AddEditProductSideEffect.NavigateOnSave -> {
+                    navigateOnProductSaved()
+                }
+            }
         }
     }
 
@@ -114,20 +86,7 @@ fun AddProductScreen(
         onNavigateUp = onNavigateUp,
         onEvent = viewModel::onEvent,
         onProductPhotoClick = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                photoPickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
-                )
-            } else {
-                // Handle older Android versions or provide alternative photo picking method
-                if (legacyStoragePermissionState.status.isGranted) {
-                    legacyPhotoLauncher.launch("image/*")
-                } else {
-                    legacyStoragePermissionState.launchPermissionRequest()
-                }
-            }
+            launchImagePicker()
         }
     )
 }
@@ -143,7 +102,9 @@ fun AddProductScreenContent(
     val itemName = uiState.itemName
     val itemVariant = uiState.itemVariant
     val itemPhotoUri = uiState.itemPhotoUri
+    val itemResId = uiState.itemPhotoResId
     val header = uiState.header
+    val buttonLabel = uiState.buttonText
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -158,6 +119,7 @@ fun AddProductScreenContent(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             SharedTopAppBar(
@@ -177,15 +139,16 @@ fun AddProductScreenContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             ProductPhoto(
-                label = "Product Photo*",
+                label = stringResource(R.string.text_label_product_photo),
                 photoUri = itemPhotoUri,
+                imageResId = itemResId,
                 onClick = onProductPhotoClick
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             ProductLabel(
-                label = "Product Name*",
+                label = stringResource(R.string.text_label_product_name),
                 value = itemName,
                 placeholder = "Enter product name",
                 onValueChange = {
@@ -196,7 +159,7 @@ fun AddProductScreenContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             ProductLabel(
-                label = "Variation*",
+                label = stringResource(R.string.text_label_variation),
                 value = itemVariant,
                 placeholder = "Enter Variation",
                 onValueChange = {
@@ -221,6 +184,7 @@ fun AddProductScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             ProductSaveButton(
+                buttonLabel = buttonLabel,
                 onClick = {
                     onEvent(AddEditProductEvent.OnSaveProduct)
                 }
@@ -232,6 +196,7 @@ fun AddProductScreenContent(
 @Composable
 private fun ProductSaveButton(
     modifier: Modifier = Modifier,
+    buttonLabel: String,
     onClick: () -> Unit
 ) {
     Button(
@@ -246,7 +211,7 @@ private fun ProductSaveButton(
         }
     ) {
         Text(
-            text = "Save Product",
+            text = buttonLabel,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             style = MaterialTheme.typography.titleMedium
         )
@@ -376,8 +341,7 @@ private fun ProductRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             text = label,
             style = MaterialTheme.typography.titleMedium
         )
@@ -419,6 +383,7 @@ private fun ProductRow(
 private fun ProductPhoto(
     label: String,
     photoUri: Uri?,
+    imageResId: Int,
     onClick: () -> Unit
 ) {
     ProductBaseCard {
@@ -451,10 +416,15 @@ private fun ProductPhoto(
                     placeholder = painterResource(R.drawable.outline_add_photo_alternate_24)
                 )
             } else {
+                val imageResId = if (imageResId != 0) {
+                    imageResId
+                } else {
+                    R.drawable.outline_add_photo_alternate_24
+                }
                 Image(
                     modifier = imageModifier,
                     contentDescription = "Product Photo",
-                    painter = painterResource(R.drawable.outline_add_photo_alternate_24),
+                    painter = painterResource(imageResId),
                 )
             }
         }

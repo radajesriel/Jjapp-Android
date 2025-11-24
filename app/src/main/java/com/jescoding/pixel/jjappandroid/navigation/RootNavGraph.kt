@@ -59,7 +59,7 @@ fun RootNavGraph(navController: NavHostController) {
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onProductSaved = {
+                navigateOnProductSaved = {
                     navController.navigate(Screen.Dashboard.route)
                 }
             )

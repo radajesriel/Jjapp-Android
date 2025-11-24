@@ -1,6 +1,7 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation
 
 import android.net.Uri
+import androidx.annotation.DrawableRes
 
 data class AddEditProductUiState(
     val itemSku: String = "",
@@ -12,8 +13,9 @@ data class AddEditProductUiState(
     val itemCostPrice: String = "",
     val itemSellingPrice: String = "",
     val itemPhotoUri: Uri? = null,
+    @DrawableRes val itemPhotoResId: Int = 0,
     val header: String = "",
-    val onProductSaved: Boolean = false,
+    val buttonText: String = "",
     val error: String? = null,
     val isLoading: Boolean = false
 ) {

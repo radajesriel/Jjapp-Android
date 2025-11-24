@@ -6,6 +6,7 @@ import com.jescoding.pixel.jjappandroid.core.data.local.real.dao.DashboardDao
 import com.jescoding.pixel.jjappandroid.core.data.local.real.db.AppDatabase
 import com.jescoding.pixel.jjappandroid.core.data.local.real.db.AppDatabaseCallback
 import com.jescoding.pixel.jjappandroid.core.data.repository.DashboardRepositoryImpl
+import com.jescoding.pixel.jjappandroid.core.domain.providers.ResourceProvider
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import dagger.Binds
 import dagger.Module
@@ -23,8 +24,11 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabaseCallback(daoProvider: Provider<DashboardDao>): AppDatabaseCallback {
-        return AppDatabaseCallback(daoProvider)
+    fun provideDatabaseCallback(
+        daoProvider: Provider<DashboardDao>,
+        resourceProvider: ResourceProvider,
+    ): AppDatabaseCallback {
+        return AppDatabaseCallback(daoProvider, resourceProvider)
     }
 
     @Provides

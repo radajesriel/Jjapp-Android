@@ -6,8 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "dashboard_items",
-    //Best practice to index faster queries
-    indices = [Index(value = ["itemSku"], unique = true)]
+    indices = [Index(
+        value = ["itemSku"],
+        unique = true
+    )]
 )
 data class DashboardItemEntity(
     @PrimaryKey val itemSku: String,
