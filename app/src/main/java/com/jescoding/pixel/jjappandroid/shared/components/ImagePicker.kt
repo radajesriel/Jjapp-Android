@@ -1,4 +1,4 @@
-package com.jescoding.pixel.jjappandroid.features.inventory.utils
+package com.jescoding.pixel.jjappandroid.shared.components
 
 import android.Manifest
 import android.net.Uri

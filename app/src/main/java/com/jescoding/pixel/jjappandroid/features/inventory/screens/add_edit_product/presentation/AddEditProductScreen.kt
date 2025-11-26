@@ -52,7 +52,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductEvent
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductSideEffect
-import com.jescoding.pixel.jjappandroid.features.inventory.utils.rememberImagePicker
+import com.jescoding.pixel.jjappandroid.shared.components.LoadingView
+import com.jescoding.pixel.jjappandroid.shared.components.rememberImagePicker
 import com.jescoding.pixel.jjappandroid.shared.components.SharedTopAppBar
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
@@ -104,7 +105,8 @@ fun AddProductScreenContent(
     val itemPhotoUri = uiState.itemPhotoUri
     val itemResId = uiState.itemPhotoResId
     val header = uiState.header
-    val buttonLabel = uiState.buttonText
+    val buttonLabel = uiState.buttonLabel
+    val isLoading = uiState.isLoading
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -129,66 +131,70 @@ fun AddProductScreenContent(
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(12.dp))
+        if (isLoading) {
+            LoadingView(innerPadding)
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
 
-            ProductPhoto(
-                label = stringResource(R.string.text_label_product_photo),
-                photoUri = itemPhotoUri,
-                imageResId = itemResId,
-                onClick = onProductPhotoClick
-            )
+                ProductPhoto(
+                    label = stringResource(R.string.text_label_product_photo),
+                    photoUri = itemPhotoUri,
+                    imageResId = itemResId,
+                    onClick = onProductPhotoClick
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            ProductLabel(
-                label = stringResource(R.string.text_label_product_name),
-                value = itemName,
-                placeholder = "Enter product name",
-                onValueChange = {
-                    onEvent(AddEditProductEvent.OnNameChange(it))
-                }
-            )
+                ProductLabel(
+                    label = stringResource(R.string.text_label_product_name),
+                    value = itemName,
+                    placeholder = "Enter product name",
+                    onValueChange = {
+                        onEvent(AddEditProductEvent.OnNameChange(it))
+                    }
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            ProductLabel(
-                label = stringResource(R.string.text_label_variation),
-                value = itemVariant,
-                placeholder = "Enter Variation",
-                onValueChange = {
-                    onEvent(AddEditProductEvent.OnVariationChange(it))
-                }
-            )
+                ProductLabel(
+                    label = stringResource(R.string.text_label_variation),
+                    value = itemVariant,
+                    placeholder = "Enter Variation",
+                    onValueChange = {
+                        onEvent(AddEditProductEvent.OnVariationChange(it))
+                    }
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            ProductCosts(
-                uiState = uiState,
-                onEvent = onEvent
-            )
+                ProductCosts(
+                    uiState = uiState,
+                    onEvent = onEvent
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            ProductQuantities(
-                uiState = uiState,
-                onEvent = onEvent
-            )
+                ProductQuantities(
+                    uiState = uiState,
+                    onEvent = onEvent
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            ProductSaveButton(
-                buttonLabel = buttonLabel,
-                onClick = {
-                    onEvent(AddEditProductEvent.OnSaveProduct)
-                }
-            )
+                ProductSaveButton(
+                    buttonLabel = buttonLabel,
+                    onClick = {
+                        onEvent(AddEditProductEvent.OnSaveProduct)
+                    }
+                )
+            }
         }
     }
 }

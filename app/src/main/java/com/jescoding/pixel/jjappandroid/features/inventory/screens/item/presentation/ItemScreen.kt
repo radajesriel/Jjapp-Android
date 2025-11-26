@@ -22,6 +22,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presentation.component.InventoryBody
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.item.presentation.component.InventoryItemHeader
+import com.jescoding.pixel.jjappandroid.shared.components.LoadingView
 import com.jescoding.pixel.jjappandroid.shared.components.SharedTopAppBar
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
@@ -33,7 +34,6 @@ fun ItemScreen(
     viewModel: ItemScreenViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    val itemSku = state.item?.itemSku
 
     ItemScreenContent(
         modifier = modifier,
@@ -53,6 +53,10 @@ fun ItemScreenContent(
     modifier: Modifier = Modifier,
     uiState: InventoryUiState
 ) {
+
+    val item = uiState.item
+    val isLoading = uiState.isLoading
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -76,18 +80,17 @@ fun ItemScreenContent(
             }
         }
     ) { innerPadding ->
-        when {
-            uiState.item != null -> {
-                val item = uiState.item
-                Column(
-                    modifier = modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    InventoryItemHeader(data = item)
-                    InventoryBody(data = item)
-                }
+        if (isLoading) {
+            LoadingView(innerPadding)
+        } else if (item != null) {
+            Column(
+                modifier = modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                InventoryItemHeader(data = item)
+                InventoryBody(data = item)
             }
         }
     }

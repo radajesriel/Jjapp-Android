@@ -20,10 +20,8 @@ class DashboardRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getDashboardItemBySku(itemSku: String): Flow<DashboardItem?> {
-        return dao.getItemBySku(itemSku).map {
-            it?.toDomainModel()
-        }
+    override fun getDashboardItemBySku(itemSku: String): DashboardItem? {
+        return dao.getItemBySku(itemSku)?.toDomainModel()
     }
 
     override suspend fun saveDashboardItems(item: DashboardItem) {

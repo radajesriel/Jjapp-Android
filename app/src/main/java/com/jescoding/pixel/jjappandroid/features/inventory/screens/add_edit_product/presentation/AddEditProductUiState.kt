@@ -15,7 +15,7 @@ data class AddEditProductUiState(
     val itemPhotoUri: Uri? = null,
     @DrawableRes val itemPhotoResId: Int = 0,
     val header: String = "",
-    val buttonText: String = "",
+    val buttonLabel: String = "",
     val error: String? = null,
     val isLoading: Boolean = false
 ) {

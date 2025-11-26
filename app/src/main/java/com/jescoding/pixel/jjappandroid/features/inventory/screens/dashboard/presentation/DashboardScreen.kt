@@ -26,6 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.presentation.components.DashboardHeader
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.presentation.components.DashboardItem
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.dashboard.presentation.data.FakeDashboardData
+import com.jescoding.pixel.jjappandroid.shared.components.LoadingView
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
 
@@ -61,6 +62,7 @@ fun DashboardScreenContent(
 ) {
     val items = uiState.items
     val searchQuery = uiState.searchQuery ?: ""
+    val isLoading = uiState.isLoading
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -82,25 +84,31 @@ fun DashboardScreenContent(
             }
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // Adding key to optimize recompositions (Best practice)
-            items(items, key = { it.itemSku }) { item ->
-                Log.d("DashboardScreen", "Rendering item: ${item.itemUri}")
-                DashboardItem(
-                    data = item,
-                    onClick = {
-                        onNavigateToItem(item.itemSku)
-                    }
-                )
+        if (isLoading) {
+            LoadingView(innerPadding = innerPadding)
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Adding key to optimize recompositions (Best practice)
+                items(items, key = { it.itemSku }) { item ->
+                    Log.d("DashboardScreen", "Rendering item: ${item.itemUri}")
+                    DashboardItem(
+                        data = item,
+                        onClick = {
+                            onNavigateToItem(item.itemSku)
+                        }
+                    )
+                }
             }
         }
+
+
     }
 }
 

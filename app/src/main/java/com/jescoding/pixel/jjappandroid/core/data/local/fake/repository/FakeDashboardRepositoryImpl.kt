@@ -18,10 +18,8 @@ class FakeDashboardRepositoryImpl @Inject constructor() : DashboardRepository {
         }
     }
 
-    override fun getDashboardItemBySku(itemSku: String): Flow<DashboardItem?> {
-        return flow {
-            emit(items.find { it.itemSku == itemSku })
-        }
+    override fun getDashboardItemBySku(itemSku: String): DashboardItem? {
+        return items.find { it.itemSku == itemSku }
     }
 
     override suspend fun saveDashboardItems(item: DashboardItem) {

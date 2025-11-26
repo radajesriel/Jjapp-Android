@@ -20,15 +20,21 @@ import javax.inject.Singleton
 object DomainModule {
     @Provides
     @Singleton
-    fun provideGetDashboardItems(repository: DashboardRepository): GetDashboardItems {
+    fun provideGetDashboardItems(
+        repository: DashboardRepository
+    ): GetDashboardItems {
         return GetDashboardItems(repository)
     }
 
     @Provides
     @Singleton
-    fun provideGetDashboardItemBySku(repository: DashboardRepository): GetDashboardItemBySku {
+    fun provideGetDashboardItemBySku(
+        repository: DashboardRepository,
+        dispatcherProvider: DispatcherProvider
+    ): GetDashboardItemBySku {
         return GetDashboardItemBySku(
-            repository
+            repository,
+            dispatcherProvider
         )
     }
 

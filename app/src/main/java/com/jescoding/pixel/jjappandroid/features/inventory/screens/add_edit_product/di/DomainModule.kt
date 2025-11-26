@@ -1,5 +1,6 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.di
 
+import com.jescoding.pixel.jjappandroid.core.domain.providers.DispatcherProvider
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.repository.ProductImageRepository
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.GetPermanentImageUri
@@ -15,16 +16,20 @@ import javax.inject.Singleton
 object DomainModule {
     @Provides
     @Singleton
-    fun provideGetImageUri(repository: ProductImageRepository): GetPermanentImageUri {
-        return GetPermanentImageUri(repository)
+    fun provideGetImageUri(
+        repository: ProductImageRepository,
+        dispatcherProvider: DispatcherProvider
+    ): GetPermanentImageUri {
+        return GetPermanentImageUri(repository, dispatcherProvider)
     }
 
     @Provides
     @Singleton
     fun provideSaveProduct(
         repository: DashboardRepository,
-        getPermanentImageUri: GetPermanentImageUri
+        getPermanentImageUri: GetPermanentImageUri,
+        dispatcherProvider: DispatcherProvider
     ): SaveProduct {
-        return SaveProduct(repository, getPermanentImageUri)
+        return SaveProduct(repository, getPermanentImageUri, dispatcherProvider)
     }
 }

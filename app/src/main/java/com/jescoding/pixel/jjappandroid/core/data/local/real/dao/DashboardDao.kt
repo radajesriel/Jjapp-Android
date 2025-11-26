@@ -19,7 +19,7 @@ interface DashboardDao {
     fun getAllItems(): Flow<List<DashboardItemEntity>>
 
     @Query("SELECT * FROM dashboard_items WHERE itemSku = :itemSku")
-    fun getItemBySku(itemSku: String): Flow<DashboardItemEntity?>
+    fun getItemBySku(itemSku: String): DashboardItemEntity?
 
     @Query("DELETE FROM dashboard_items")
     suspend fun clearAll()
