@@ -7,4 +7,5 @@ interface DashboardRepository {
     fun getDashboardItems(): Flow<List<DashboardItem>>
     fun getDashboardItemBySku(itemSku: String): DashboardItem?
     suspend fun saveDashboardItems(item: DashboardItem)
+    suspend fun deleteDashboardItemBySku(itemSku: String)
 }

@@ -17,7 +17,7 @@ data class AddEditProductUiState(
     val header: String = "",
     val buttonLabel: String = "",
     val error: String? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 ) {
     val costPriceDisplay: String
         get() = if (itemCostPrice == "0.0") "" else itemCostPrice

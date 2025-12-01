@@ -61,6 +61,9 @@ fun RootNavGraph(navController: NavHostController) {
                 },
                 navigateOnProductSaved = {
                     navController.navigate(Screen.Dashboard.route)
+                },
+                navigateOnProductDeleted = {
+                    navController.navigate(Screen.Dashboard.route)
                 }
             )
         }

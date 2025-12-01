@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 fun SharedTopAppBar(
     title: String,
     navigationDescription: String,
+    actionIcon: @Composable () -> Unit = {},
     onNavigateUp: () -> Unit
 ) {
     CenterAlignedTopAppBar(
@@ -42,6 +43,9 @@ fun SharedTopAppBar(
                     tint = Color.White
                 )
             }
+        },
+        actions = {
+            actionIcon()
         }
     )
 }

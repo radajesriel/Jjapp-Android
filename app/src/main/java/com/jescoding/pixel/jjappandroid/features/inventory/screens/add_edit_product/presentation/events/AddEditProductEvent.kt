@@ -12,4 +12,5 @@ sealed class AddEditProductEvent {
     data class OnHandStockChange(val stock: String) : AddEditProductEvent()
     data class OnTheWayStockChange(val stock: String) : AddEditProductEvent()
     object OnSaveProduct : AddEditProductEvent()
+    object OnDeleteProduct : AddEditProductEvent()
 }

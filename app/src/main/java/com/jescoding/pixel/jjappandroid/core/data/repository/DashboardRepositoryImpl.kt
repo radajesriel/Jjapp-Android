@@ -29,4 +29,8 @@ class DashboardRepositoryImpl @Inject constructor(
         dao.insertItem(dashboardEntity)
     }
 
+    override suspend fun deleteDashboardItemBySku(itemSku: String) {
+        dao.deleteItemBySku(itemSku)
+    }
+
 }

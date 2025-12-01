@@ -24,4 +24,6 @@ interface DashboardDao {
     @Query("DELETE FROM dashboard_items")
     suspend fun clearAll()
 
+    @Query("DELETE FROM dashboard_items WHERE itemSku = :itemSku")
+    suspend fun deleteItemBySku(itemSku: String)
 }

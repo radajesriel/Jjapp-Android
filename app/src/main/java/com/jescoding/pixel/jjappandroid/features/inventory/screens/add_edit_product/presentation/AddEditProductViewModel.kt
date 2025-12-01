@@ -5,10 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jescoding.pixel.jjappandroid.R
-import com.jescoding.pixel.jjappandroid.core.domain.providers.DispatcherProvider
 import com.jescoding.pixel.jjappandroid.core.domain.providers.ResourceProvider
 import com.jescoding.pixel.jjappandroid.core.utils.ValidationUtils
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.model.NewProductInput
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.DeleteProduct
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.LoadProduct
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.SaveProduct
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductEvent
@@ -29,6 +29,7 @@ import javax.inject.Inject
 class AddEditProductViewModel @Inject constructor(
     private val saveProduct: SaveProduct,
     private val loadProduct: LoadProduct,
+    private val deleteProduct: DeleteProduct,
     private val resourceProvider: ResourceProvider,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -47,7 +48,6 @@ class AddEditProductViewModel @Inject constructor(
     private val _buttonLabel = MutableStateFlow("")
     private val _error = MutableStateFlow<String?>(null)
     private val _isLoading = MutableStateFlow(false)
-
     private val itemSku: String? = savedStateHandle["itemSku"]
     private val _uiState = MutableStateFlow(AddEditProductUiState())
     val uiState: StateFlow<AddEditProductUiState> = _uiState.asStateFlow()
@@ -113,9 +113,12 @@ class AddEditProductViewModel @Inject constructor(
             is AddEditProductEvent.OnCostChange -> {
                 _itemCostPrice.value = ValidationUtils.getValidatedCurrency(event.cost)
             }
+
             is AddEditProductEvent.OnSellingPriceChange -> {
                 _itemSellingPrice.value = ValidationUtils.getValidatedCurrency(event.price)
             }
+
+            is AddEditProductEvent.OnDeleteProduct -> onDeleteProduct()
         }
     }
 
@@ -143,6 +146,21 @@ class AddEditProductViewModel @Inject constructor(
         }
     }
 
+    private fun onDeleteProduct() = viewModelScope.launch {
+        _isLoading.value = true
+        _error.value = null
+
+        itemSku?.let {
+            try {
+                deleteProduct(itemSku)
+                _sideEffectFlow.emit(AddEditProductSideEffect.NavigateOnDelete)
+            } catch (e: Exception) {
+                _error.value = "Unexpected error occurred"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
     private fun onSaveProduct() = viewModelScope.launch {
         _isLoading.value = true

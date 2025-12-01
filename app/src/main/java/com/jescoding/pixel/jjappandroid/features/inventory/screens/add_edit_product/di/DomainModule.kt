@@ -3,6 +3,7 @@ package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_pro
 import com.jescoding.pixel.jjappandroid.core.domain.providers.DispatcherProvider
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.repository.ProductImageRepository
+import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.DeleteProduct
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.GetPermanentImageUri
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.use_case.SaveProduct
 import dagger.Module
@@ -32,4 +33,17 @@ object DomainModule {
     ): SaveProduct {
         return SaveProduct(repository, getPermanentImageUri, dispatcherProvider)
     }
+
+    @Provides
+    @Singleton
+    fun provideDeleteProduct(
+        repository: DashboardRepository,
+        dispatcherProvider: DispatcherProvider
+    ): DeleteProduct {
+        return DeleteProduct(
+            repository,
+            dispatcherProvider
+        )
+    }
+
 }

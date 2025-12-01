@@ -26,4 +26,8 @@ class FakeDashboardRepositoryImpl @Inject constructor() : DashboardRepository {
         // Do nothing
     }
 
+    override suspend fun deleteDashboardItemBySku(itemSku: String) {
+       // Do nothing
+    }
+
 }

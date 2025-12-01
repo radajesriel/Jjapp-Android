@@ -2,4 +2,5 @@ package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_pro
 
 sealed class AddEditProductSideEffect {
     object NavigateOnSave : AddEditProductSideEffect()
+    object NavigateOnDelete : AddEditProductSideEffect()
 }

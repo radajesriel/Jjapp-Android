@@ -23,5 +23,7 @@
 
     <string name="button_label_save_product">Save Product</string>
     <string name="button_label_update_product">Update Product</string>
+    <string name="label_description_delete_product">Delete Product</string>
+    <string name="snackbar_content_product_deleted_successfully">Product deleted successfully</string>
 
 </resources>

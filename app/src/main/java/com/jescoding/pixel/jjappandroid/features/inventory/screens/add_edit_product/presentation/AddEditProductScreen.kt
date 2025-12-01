@@ -19,11 +19,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -53,8 +57,8 @@ import com.jescoding.pixel.jjappandroid.R
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductEvent
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation.events.AddEditProductSideEffect
 import com.jescoding.pixel.jjappandroid.shared.components.LoadingView
-import com.jescoding.pixel.jjappandroid.shared.components.rememberImagePicker
 import com.jescoding.pixel.jjappandroid.shared.components.SharedTopAppBar
+import com.jescoding.pixel.jjappandroid.shared.components.rememberImagePicker
 import com.jescoding.pixel.jjappandroid.shared.theme.JjappAndroidTheme
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -63,7 +67,8 @@ fun AddProductScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditProductViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit,
-    navigateOnProductSaved: () -> Unit
+    navigateOnProductSaved: () -> Unit,
+    navigateOnProductDeleted: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
@@ -76,6 +81,10 @@ fun AddProductScreen(
             when (event) {
                 is AddEditProductSideEffect.NavigateOnSave -> {
                     navigateOnProductSaved()
+                }
+
+                is AddEditProductSideEffect.NavigateOnDelete -> {
+                    navigateOnProductDeleted()
                 }
             }
         }
@@ -100,6 +109,7 @@ fun AddProductScreenContent(
     onEvent: (AddEditProductEvent) -> Unit,
     onProductPhotoClick: () -> Unit
 ) {
+    val itemSku = uiState.itemSku
     val itemName = uiState.itemName
     val itemVariant = uiState.itemVariant
     val itemPhotoUri = uiState.itemPhotoUri
@@ -107,11 +117,12 @@ fun AddProductScreenContent(
     val header = uiState.header
     val buttonLabel = uiState.buttonLabel
     val isLoading = uiState.isLoading
+    val error = uiState.error
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.error) {
-        uiState.error?.let {
+    LaunchedEffect(error) {
+        error?.let {
             snackbarHostState.showSnackbar(
                 message = it,
                 duration = SnackbarDuration.Short
@@ -127,7 +138,20 @@ fun AddProductScreenContent(
             SharedTopAppBar(
                 title = header,
                 navigationDescription = stringResource(R.string.icon_label_back),
-                onNavigateUp = onNavigateUp
+                onNavigateUp = onNavigateUp,
+                actionIcon = {
+                    if (itemSku.isNotEmpty()) {
+                        IconButton(onClick = {
+                            onEvent(AddEditProductEvent.OnDeleteProduct)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete, // Example icon
+                                contentDescription = stringResource(R.string.label_description_delete_product),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
