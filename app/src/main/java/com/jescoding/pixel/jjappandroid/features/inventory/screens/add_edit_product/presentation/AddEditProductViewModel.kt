@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,20 +35,6 @@ class AddEditProductViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _itemSku = MutableStateFlow("")
-    private val _itemName = MutableStateFlow("")
-    private val _itemVariant = MutableStateFlow("")
-    private val _availableStock = MutableStateFlow("")
-    private val _onHandStock = MutableStateFlow("")
-    private val _onTheWayStock = MutableStateFlow("")
-    private val _itemCostPrice = MutableStateFlow("")
-    private val _itemSellingPrice = MutableStateFlow("")
-    private val _itemPhotoUri = MutableStateFlow<Uri?>(null)
-    private val _itemPhotoResId = MutableStateFlow(0)
-    private val _header = MutableStateFlow("")
-    private val _buttonLabel = MutableStateFlow("")
-    private val _error = MutableStateFlow<String?>(null)
-    private val _isLoading = MutableStateFlow(false)
     private val itemSku: String? = savedStateHandle["itemSku"]
     private val _uiState = MutableStateFlow(AddEditProductUiState())
     val uiState: StateFlow<AddEditProductUiState> = _uiState.asStateFlow()
@@ -56,66 +43,55 @@ class AddEditProductViewModel @Inject constructor(
     val sideEffectFlow = _sideEffectFlow.asSharedFlow()
 
     init {
-        observeStateChanges()
         initializeScreen()
     }
 
     private fun initializeScreen() {
         if (itemSku != null) {
-            _header.value = resourceProvider.getString(R.string.text_label_edit_product)
-            _buttonLabel.value = resourceProvider.getString(R.string.button_label_update_product)
+            _uiState.update {
+                it.copy(
+                    header = resourceProvider.getString(R.string.text_label_edit_product),
+                    buttonLabel = resourceProvider.getString(R.string.button_label_update_product)
+                )
+            }
             onLoadProduct(itemSku)
         } else {
-            _header.value = resourceProvider.getString(R.string.text_label_add_product)
-            _buttonLabel.value = resourceProvider.getString(R.string.button_label_save_product)
+            _uiState.update {
+                it.copy(
+                    header = resourceProvider.getString(R.string.text_label_add_product),
+                    buttonLabel = resourceProvider.getString(R.string.button_label_save_product)
+                )
+            }
         }
-    }
-
-    private fun observeStateChanges() {
-        combine(
-            _itemSku, _itemName, _itemVariant, _availableStock,
-            _onHandStock, _onTheWayStock, _itemCostPrice, _itemSellingPrice,
-            _itemPhotoUri, _itemPhotoResId, _header, _buttonLabel,
-            _isLoading, _error
-        ) { values ->
-            AddEditProductUiState(
-                itemSku = values[0] as String,
-                itemName = values[1] as String,
-                itemVariant = values[2] as String,
-                availableStock = values[3] as String,
-                onHandStock = values[4] as String,
-                onTheWayStock = values[5] as String,
-                itemCostPrice = values[6] as String,
-                itemSellingPrice = values[7] as String,
-                itemPhotoUri = values[8] as Uri?,
-                itemPhotoResId = values[9] as Int,
-                header = values[10] as String,
-                buttonLabel = values[11] as String,
-                isLoading = values[12] as Boolean,
-                error = values[13] as String?
-            )
-        }.onEach {
-            _uiState.value = it
-        }.launchIn(viewModelScope)
-
     }
 
     fun onEvent(event: AddEditProductEvent) {
         when (event) {
-            is AddEditProductEvent.OnNameChange -> _itemName.value = event.name
-            is AddEditProductEvent.OnVariationChange -> _itemVariant.value = event.variation
-            is AddEditProductEvent.OnPhotoSelected -> _itemPhotoUri.value = event.uri
-            is AddEditProductEvent.OnAvailableStockChange -> _availableStock.value = event.stock
-            is AddEditProductEvent.OnHandStockChange -> _onHandStock.value = event.stock
-            is AddEditProductEvent.OnTheWayStockChange -> _onTheWayStock.value = event.stock
+            is AddEditProductEvent.OnNameChange -> _uiState.update { it.copy(itemName = event.name) }
+            is AddEditProductEvent.OnVariationChange -> _uiState.update { it.copy(itemVariant = event.variation) }
+            is AddEditProductEvent.OnPhotoSelected -> _uiState.update { it.copy(itemPhotoUri = event.uri) }
+            is AddEditProductEvent.OnAvailableStockChange -> _uiState.update {
+                it.copy(
+                    availableStock = event.stock
+                )
+            }
+
+            is AddEditProductEvent.OnHandStockChange -> _uiState.update { it.copy(onHandStock = event.stock) }
+            is AddEditProductEvent.OnTheWayStockChange -> _uiState.update { it.copy(onTheWayStock = event.stock) }
             is AddEditProductEvent.OnSaveProduct -> onSaveProduct()
 
             is AddEditProductEvent.OnCostChange -> {
-                _itemCostPrice.value = ValidationUtils.getValidatedCurrency(event.cost)
+                _uiState.update { it.copy(itemCostPrice = ValidationUtils.getValidatedCurrency(event.cost)) }
             }
 
             is AddEditProductEvent.OnSellingPriceChange -> {
-                _itemSellingPrice.value = ValidationUtils.getValidatedCurrency(event.price)
+                _uiState.update {
+                    it.copy(
+                        itemSellingPrice = ValidationUtils.getValidatedCurrency(
+                            event.price
+                        )
+                    )
+                }
             }
 
             is AddEditProductEvent.OnDeleteProduct -> onDeleteProduct()
@@ -123,48 +99,55 @@ class AddEditProductViewModel @Inject constructor(
     }
 
     private fun onLoadProduct(itemSku: String) = viewModelScope.launch {
-        _isLoading.value = true
-        _error.value = null
+        _uiState.update {
+            it.copy(isLoading = true, error = null)
+        }
 
         try {
             loadProduct(itemSku)?.let { item ->
-                _itemSku.value = item.itemSku
-                _itemName.value = item.itemName
-                _itemVariant.value = item.itemVariant
-                _availableStock.value = item.availableStock.toString()
-                _onHandStock.value = item.onHandStock.toString()
-                _onTheWayStock.value = item.onTheWayStock.toString()
-                _itemCostPrice.value = item.itemCostPrice.toString()
-                _itemSellingPrice.value = item.itemSellingPrice.toString()
-                _itemPhotoUri.value = item.itemUri
-                _itemPhotoResId.value = item.itemImageResId
+                _uiState.update {
+                    it.copy(
+                        itemSku = item.itemSku,
+                        itemName = item.itemName,
+                        itemVariant = item.itemVariant,
+                        availableStock = item.availableStock.toString(),
+                        onHandStock = item.onHandStock.toString(),
+                        onTheWayStock = item.onTheWayStock.toString(),
+                        itemCostPrice = item.itemCostPrice.toString(),
+                        itemSellingPrice = item.itemSellingPrice.toString(),
+                        itemPhotoUri = item.itemUri,
+                        itemPhotoResId = item.itemImageResId
+                    )
+                }
             }
         } catch (e: Exception) {
-            _error.value = "Unexpected error occurred"
+            _uiState.update { it.copy(error = "Unexpected error occurred") }
         } finally {
-            _isLoading.value = false
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     private fun onDeleteProduct() = viewModelScope.launch {
-        _isLoading.value = true
-        _error.value = null
+        _uiState.update {
+            it.copy(isLoading = true, error = null)
+        }
 
         itemSku?.let {
             try {
                 deleteProduct(itemSku)
                 _sideEffectFlow.emit(AddEditProductSideEffect.NavigateOnDelete)
             } catch (e: Exception) {
-                _error.value = "Unexpected error occurred"
+                _uiState.update { it.copy(error = "Unexpected error occurred") }
             } finally {
-                _isLoading.value = false
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
 
     private fun onSaveProduct() = viewModelScope.launch {
-        _isLoading.value = true
-        _error.value = null
+        _uiState.update {
+            it.copy(isLoading = true, error = null)
+        }
 
         val input = NewProductInput(
             itemSku = itemSku,
@@ -183,9 +166,9 @@ class AddEditProductViewModel @Inject constructor(
             saveProduct(input)
             _sideEffectFlow.emit(AddEditProductSideEffect.NavigateOnSave)
         } catch (e: Exception) {
-            _error.value = "Unexpected error occurred"
+            _uiState.update { it.copy(error = "Unexpected error occurred") }
         } finally {
-            _isLoading.value = false
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 }

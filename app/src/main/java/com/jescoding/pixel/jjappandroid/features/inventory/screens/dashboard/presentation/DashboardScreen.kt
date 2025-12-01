@@ -121,7 +121,7 @@ private fun DashboardScreenPreview() {
     JjappAndroidTheme {
         DashboardScreenContent(
             uiState = DashboardUiState(
-                items = FakeDashboardData.items,
+                originalItems = FakeDashboardData.items,
                 isLoading = false,
                 error = null,
                 searchQuery = "Search query"
