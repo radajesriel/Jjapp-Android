@@ -6,7 +6,9 @@ import com.jescoding.pixel.jjappandroid.core.data.local.real.entity.toDomainMode
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import okio.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,7 +26,7 @@ class DashboardRepositoryImpl @Inject constructor(
         return dao.getItemBySku(itemSku)?.toDomainModel()
     }
 
-    override suspend fun saveDashboardItems(item: DashboardItem) {
+    override suspend fun saveDashboardItem(item: DashboardItem) {
         val dashboardEntity = item.toDataModel()
         dao.insertItem(dashboardEntity)
     }

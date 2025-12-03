@@ -42,8 +42,8 @@ android {
 }
 
 dependencies {
-    // Room Database
     implementation(libs.androidx.room.runtime)
+    testImplementation(libs.junit) // Room Database
     ksp(libs.androidx.room.compiler) // Annotation processor
     implementation(libs.androidx.room.ktx) // Kotlin Extensions and Coroutines support
 
@@ -68,12 +68,16 @@ dependencies {
     // For permission handling
     implementation(libs.accompanist.permissions)
 
-
     // For asynchronous image loading (recommended)
     implementation(libs.coil.compose)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.kotlinx.coroutines.test) // For testing coroutines
+    testImplementation(libs.mockk) // MockK for mocking in tests
+    testImplementation(libs.turbine) //Turbine for easier Flow testing
+    testImplementation(libs.truth) //Google Truth for more readable assertions
+
+    androidTestImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

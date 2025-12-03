@@ -44,7 +44,7 @@ class SaveProduct @Inject constructor(
                 itemUri = permanentUri
             )
 
-            repository.saveDashboardItems(dashboardItem)
+            repository.saveDashboardItem(dashboardItem)
         }
     }
 }
