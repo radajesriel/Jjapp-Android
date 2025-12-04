@@ -23,4 +23,4 @@ jobs:
 
     # 4. Run unit tests
     - name: Run unit tests
-      run: ./gradlew clean testDebug
+      run: ./gradlew clean test
