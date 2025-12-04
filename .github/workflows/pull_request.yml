@@ -24,3 +24,14 @@ jobs:
     # 4. Run unit tests
     - name: Run unit tests
       run: ./gradlew clean test
+
+    # 5. NEW STEP: Upload test results
+    - name: Upload test results
+    # This step will only run if the previous steps (including tests) succeed or fail.
+    # This ensures the report is always uploaded.
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: test-reports
+          # Gradle generates HTML test reports in this directory
+          path: '**/build/reports/tests/testDebugUnitTest'
