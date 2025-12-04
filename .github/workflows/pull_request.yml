@@ -1,0 +1,37 @@
+name: Run Tests
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+    # 3. Grant execute permission for gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 4. Run unit tests
+    - name: Run unit tests
+      run: ./gradlew clean test
+
+    # 5. NEW STEP: Upload test results
+    - name: Upload test results
+    # This step will only run if the previous steps (including tests) succeed or fail.
+    # This ensures the report is always uploaded.
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+          name: test-reports
+          # Gradle generates HTML test reports in this directory
+          path: '**/build/reports/tests/testDebugUnitTest'
