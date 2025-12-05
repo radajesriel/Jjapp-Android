@@ -3,7 +3,6 @@ package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_pro
 import android.net.Uri
 import com.google.common.truth.Truth.assertThat
 import com.jescoding.pixel.jjappandroid.core.DefaultTestClass
-import com.jescoding.pixel.jjappandroid.core.data.FakeDashboardData
 import com.jescoding.pixel.jjappandroid.core.domain.model.DashboardItem
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.domain.model.NewProductInput
