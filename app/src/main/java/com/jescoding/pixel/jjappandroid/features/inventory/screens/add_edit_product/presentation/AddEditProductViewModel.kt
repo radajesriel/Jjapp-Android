@@ -1,6 +1,5 @@
 package com.jescoding.pixel.jjappandroid.features.inventory.screens.add_edit_product.presentation
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,9 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +39,7 @@ class AddEditProductViewModel @Inject constructor(
     val sideEffectFlow = _sideEffectFlow.asSharedFlow()
 
     init {
-        initializeScreen()
+       initializeScreen()
     }
 
     private fun initializeScreen() {
@@ -54,7 +50,7 @@ class AddEditProductViewModel @Inject constructor(
                     buttonLabel = resourceProvider.getString(R.string.button_label_update_product)
                 )
             }
-            onLoadProduct(itemSku)
+            onEvent(AddEditProductEvent.OnLoadProduct(itemSku))
         } else {
             _uiState.update {
                 it.copy(
@@ -95,6 +91,7 @@ class AddEditProductViewModel @Inject constructor(
             }
 
             is AddEditProductEvent.OnDeleteProduct -> onDeleteProduct()
+            is AddEditProductEvent.OnLoadProduct -> onLoadProduct(event.itemSku)
         }
     }
 
