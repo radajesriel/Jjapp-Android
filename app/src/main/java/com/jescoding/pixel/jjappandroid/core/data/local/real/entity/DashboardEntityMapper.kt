@@ -18,7 +18,10 @@ fun DashboardItemEntity.toDomainModel(): DashboardItem {
     )
 }
 
-fun DashboardItem.toDataModel(): DashboardItemEntity {
+fun DashboardItem.toDataModel(
+    updatedAt: Long = System.currentTimeMillis(),
+    syncStatus: Int = 0
+): DashboardItemEntity {
     return DashboardItemEntity(
         itemSku = this.itemSku,
         itemName = this.itemName,
@@ -29,6 +32,8 @@ fun DashboardItem.toDataModel(): DashboardItemEntity {
         itemCostPrice = this.itemCostPrice.toDouble(),
         itemSellingPrice = this.itemSellingPrice.toDouble(),
         itemImageResId = this.itemImageResId,
-        itemUri = this.itemUri?.toString()
+        itemUri = this.itemUri?.toString(),
+        updatedAt = updatedAt,
+        syncStatus = syncStatus
     )
 }

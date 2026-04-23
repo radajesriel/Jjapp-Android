@@ -21,5 +21,7 @@ data class DashboardItemEntity(
     val itemCostPrice: Double,
     val itemSellingPrice: Double,
     val itemImageResId: Int,
-    val itemUri: String?
+    val itemUri: String?,
+    val updatedAt: Long = System.currentTimeMillis(),
+    val syncStatus: Int = 0
 )

@@ -7,8 +7,8 @@ import com.jescoding.pixel.jjappandroid.core.data.local.real.entity.DashboardIte
 
 @Database(
     entities = [DashboardItemEntity::class],
-    version = 2,
-    exportSchema = false // Recommended to set to true for production apps
+    version = 3,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract val dashboardDao: DashboardDao

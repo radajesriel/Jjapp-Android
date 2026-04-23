@@ -29,8 +29,8 @@ Single-module Android app using **Clean Architecture + MVVM** with Jetpack Compo
 
 ### Layer Structure
 
-- **Domain** (`core/domain/`): Repository interfaces, use cases, domain models, provider abstractions (DispatcherProvider, ResourceProvider)
-- **Data** (`core/data/`): Repository implementations, Room database (DAO, entities, mappers), provider implementations, Hilt DI modules
+- **Domain** (`core/domain/`): Repository interfaces, use cases, domain models, provider abstractions (DispatcherProvider, ResourceProvider, NetworkMonitor), sync interfaces (SyncManager, ImageSyncManager), auth interface (AuthManager)
+- **Data** (`core/data/`): Repository implementations, Room database (DAO, entities, mappers), provider implementations, Hilt DI modules, sync engine (`core/data/sync/`), remote layer (`core/data/remote/`) with Supabase DTOs, data sources, auth, and storage
 - **Presentation** (inside each feature): Compose screens, ViewModels with `StateFlow`/`SharedFlow` for UDF state management
 
 ### Feature Organization
@@ -41,9 +41,21 @@ Features live under `features/inventory/screens/` with each screen having its ow
 
 Type-safe routing via sealed class `Screen` in `navigation/Screen.kt`. Routes: Dashboard (start), Item/{itemSku}, AddProduct(?itemSku=). Nav graph is in `RootNavGraph.kt`.
 
+### Offline-First Sync
+
+Room is the single source of truth. Supabase provides cloud backend. Sync is invisible to the UI layer.
+
+- **Sync tracking**: `DashboardItemEntity` has `syncStatus` (SYNCED/PENDING_CREATE/PENDING_UPDATE/PENDING_DELETE) and `updatedAt` columns
+- **Sync trigger points**: On every local write (via `DashboardRepositoryImpl`), periodic (WorkManager every 15min), and on network recovery
+- **Sync algorithm**: Push-first (push local changes, then pull remote). Last-write-wins conflict resolution using `updatedAt` timestamps
+- **Key interception point**: `DashboardRepositoryImpl` — sets sync status on writes and triggers immediate sync. No changes needed in domain layer, use cases, or ViewModels
+- **Auth**: Anonymous Supabase auth on first launch (`App.kt`). Supabase RLS enforces per-user data isolation
+- **Image sync**: `ImageSyncManager` uploads/downloads product images to Supabase Storage bucket `product-images`
+- **Config**: `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set in `local.properties` and read via `BuildConfig`
+
 ### Dependency Injection
 
-Hilt with modules in `core/data/di/` (DatabaseModule, AppModule, DomainModule) and feature-level modules in `add_edit_product/di/`.
+Hilt with modules in `core/data/di/` (DatabaseModule, AppModule, DomainModule, NetworkModule, SyncModule) and feature-level modules in `add_edit_product/di/`.
 
 ### Shared UI
 
@@ -59,7 +71,7 @@ Reusable composables in `shared/components/` (ImagePicker, LoadingScreen, Shared
 
 ## Key Dependencies
 
-Managed via version catalog (`gradle/libs.versions.toml`): Room 2.6.1, Hilt 2.57.2, Navigation Compose 2.9.6, Coil 2.7.0, Accompanist Permissions 0.37.3, Coroutines 1.10.2.
+Managed via version catalog (`gradle/libs.versions.toml`): Room 2.6.1, Hilt 2.57.2, Navigation Compose 2.9.6, Coil 2.7.0, Accompanist Permissions 0.37.3, Coroutines 1.10.2, Supabase-kt 3.1.0 (Postgrest, Auth, Storage), Ktor 3.1.1, WorkManager 2.10.1, kotlinx-serialization 1.7.3, kotlinx-datetime 0.6.1.
 
 ## CI
 

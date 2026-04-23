@@ -15,7 +15,7 @@ interface DashboardDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: DashboardItemEntity)
 
-    @Query("SELECT * FROM dashboard_items")
+    @Query("SELECT * FROM dashboard_items WHERE syncStatus != 3")
     fun getAllItems(): Flow<List<DashboardItemEntity>>
 
     @Query("SELECT * FROM dashboard_items WHERE itemSku = :itemSku")
@@ -26,4 +26,13 @@ interface DashboardDao {
 
     @Query("DELETE FROM dashboard_items WHERE itemSku = :itemSku")
     suspend fun deleteItemBySku(itemSku: String)
+
+    @Query("SELECT * FROM dashboard_items WHERE syncStatus != 0")
+    suspend fun getItemsPendingSync(): List<DashboardItemEntity>
+
+    @Query("UPDATE dashboard_items SET syncStatus = :syncStatus WHERE itemSku = :itemSku")
+    suspend fun updateSyncStatus(itemSku: String, syncStatus: Int)
+
+    @Query("UPDATE dashboard_items SET syncStatus = :syncStatus, updatedAt = :updatedAt WHERE itemSku = :itemSku")
+    suspend fun markForDeletion(itemSku: String, syncStatus: Int, updatedAt: Long)
 }

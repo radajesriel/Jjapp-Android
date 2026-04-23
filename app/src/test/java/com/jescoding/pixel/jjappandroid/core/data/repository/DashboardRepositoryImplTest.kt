@@ -4,12 +4,15 @@ import com.google.common.truth.Truth.assertThat
 import com.jescoding.pixel.jjappandroid.core.DefaultTestClass
 import com.jescoding.pixel.jjappandroid.core.data.FakeDashboardData
 import com.jescoding.pixel.jjappandroid.core.data.local.real.dao.DashboardDao
+import com.jescoding.pixel.jjappandroid.core.data.sync.SyncWorkScheduler
 import com.jescoding.pixel.jjappandroid.core.domain.repository.DashboardRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -28,12 +31,16 @@ class DashboardRepositoryImplTest : DefaultTestClass() {
     @MockK
     private lateinit var dao: DashboardDao
 
+    @MockK
+    private lateinit var syncWorkScheduler: SyncWorkScheduler
+
     private lateinit var dashboardRepository: DashboardRepository
 
     @Before
     override fun setUp() {
         super.setUp()
-        dashboardRepository = DashboardRepositoryImpl(dao)
+        every { syncWorkScheduler.requestImmediateSync() } just runs
+        dashboardRepository = DashboardRepositoryImpl(dao, syncWorkScheduler)
     }
 
 
@@ -105,11 +112,12 @@ class DashboardRepositoryImplTest : DefaultTestClass() {
     }
 
     @Test
-    fun `saveDashboardItem calls dao insertItem`() = runTest {
+    fun `saveDashboardItem calls dao insertItem and triggers sync`() = runTest {
         // Arrange
         val dashboardItem = FakeDashboardData.singleItem
 
         // Mock
+        coEvery { dao.getItemBySku(any()) } returns null
         coEvery { dao.insertItem(any()) } returns Unit
 
         // Act
@@ -117,21 +125,23 @@ class DashboardRepositoryImplTest : DefaultTestClass() {
 
         // Assert
         coVerify(exactly = 1) { dao.insertItem(any()) }
+        verify(exactly = 1) { syncWorkScheduler.requestImmediateSync() }
     }
 
     @Test
-    fun `deleteDashboardItemBySku calls dao deleteItemBySku`() = runTest {
+    fun `deleteDashboardItemBySku marks for deletion and triggers sync`() = runTest {
         // Arrange
         val itemSku = "SKU001"
 
         // Mock
-        coEvery { dao.deleteItemBySku(itemSku) } returns Unit
+        coEvery { dao.markForDeletion(any(), any(), any()) } returns Unit
 
         // Act
         dashboardRepository.deleteDashboardItemBySku(itemSku)
 
         // Assert
-        coVerify { dao.deleteItemBySku(itemSku) }
+        coVerify { dao.markForDeletion(itemSku, any(), any()) }
+        verify(exactly = 1) { syncWorkScheduler.requestImmediateSync() }
     }
 
 
