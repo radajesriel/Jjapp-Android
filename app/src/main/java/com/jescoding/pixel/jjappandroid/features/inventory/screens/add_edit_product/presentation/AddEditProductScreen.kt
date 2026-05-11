@@ -198,10 +198,20 @@ fun AddProductScreenContent(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                PackagingCard(
+                    uiState = uiState,
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 ProductCosts(
                     uiState = uiState,
                     onEvent = onEvent
                 )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                ProductPrice(uiState = uiState)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -266,6 +276,85 @@ private fun ProductBaseCard(
     )
 }
 
+
+@Composable
+private fun PackagingCard(
+    uiState: AddEditProductUiState,
+) {
+    val placeholder = "Set"
+
+    ProductBaseCard {
+        Column {
+            ProductRow(
+                label = "Packaging Size",
+                value = "",
+                placeholder = placeholder,
+                onValueChange = { }
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .3f)
+            )
+
+            ProductRow(
+                label = "Packaging Cost",
+                value = "",
+                placeholder = placeholder,
+                onValueChange = { }
+            )
+        }
+    }
+}
+
+@Composable
+fun ProductPrice(
+    uiState: AddEditProductUiState
+) {
+    val placeholder = "Set"
+
+    ProductBaseCard {
+        Column {
+            ProductRow(
+                label = "Selling Price",
+                value = "",
+                placeholder = placeholder,
+                onValueChange = {}
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .3f)
+            )
+
+            ProductRow(
+                label = "Price Markup",
+                value = "",
+                placeholder = placeholder,
+                onValueChange = {}
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .3f)
+            )
+
+
+            ProductRow(
+                label = "Profit Margin",
+                value = "",
+                placeholder = placeholder,
+                onValueChange = {}
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .3f)
+            )
+        }
+    }
+}
+
 @Composable
 private fun ProductCosts(
     onEvent: (AddEditProductEvent) -> Unit,
@@ -278,12 +367,10 @@ private fun ProductCosts(
     ProductBaseCard {
         Column {
             ProductRow(
-                label = "Product Cost",
-                value = costPrice,
+                label = "Landed Cost",
+                value = "",
                 placeholder = placeholder,
-                onValueChange = {
-                    onEvent(AddEditProductEvent.OnCostChange(it))
-                }
+                onValueChange = {}
             )
 
             HorizontalDivider(
@@ -292,12 +379,22 @@ private fun ProductCosts(
             )
 
             ProductRow(
-                label = "Selling Price",
-                value = sellingPrice,
+                label = "RMB Cost",
+                value = "",
                 placeholder = placeholder,
-                onValueChange = {
-                    onEvent(AddEditProductEvent.OnSellingPriceChange(it))
-                }
+                onValueChange = {}
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .3f)
+            )
+
+            ProductRow(
+                label = "Peso Cost",
+                value = "",
+                placeholder = placeholder,
+                onValueChange = {}
             )
         }
     }
